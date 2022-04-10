@@ -74,7 +74,7 @@ int StartServer(int currentFD) {
 	// 실제 서버 아이피 삽입
 	address.sin_addr.s_addr = inet_addr(SERVER_PRIVATE_IP);
 	// 실제 서버 포트 삽입
-	address.sin_port = hton(SERVER_PORT);
+	address.sin_port = htons(SERVER_PORT);
 
 	// 사용해서 서버를 만들어야되니
 	// 현재 설정된 서버 소켓에 묶기							-1 == fail

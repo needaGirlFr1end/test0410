@@ -60,7 +60,6 @@ int StartServer(int currentFD) {
 		return -1;
 	}
 
-
 	// 소켓에다가 INET 정보 필요
 	// 서버 아이피를 listenSocket에 등록
 	sockaddr_in address;
@@ -78,7 +77,7 @@ int StartServer(int currentFD) {
 
 	// 사용해서 서버를 만들어야되니
 	// 현재 설정된 서버 소켓에 묶기							-1 == fail
-	if (bind(currentFD, (struct sockaddr*)&address, sizeof(address) == -1)) {
+	if (bind(currentFD, (struct sockaddr*)&address, sizeof(address)) == -1) {
 		perror("bind()");
 		close(currentFD);
 		return -1;

@@ -130,7 +130,7 @@ int main() {
 		if (result > 0) {
 			// listenFD에 반응 시
 			// 접속 시도 시
-			if (listenFD.revents == POOLIN) {
+			if (listenFD.revents == POLLIN) {
 				cout << " 접속 시도 " << endl;
 			};
 		};

@@ -91,7 +91,7 @@ int StartServer(int currentFD) {
 		return -1;
 	};
 	
-	cout << " 서버가 정상적으로 실행 " << endl; 
+	cout << " Complete Server " << endl; 
 
 	return 1;
 }

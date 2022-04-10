@@ -46,7 +46,7 @@ using namespace std;
 // poll 상대방이 반응을 해줬을때
 // 누군가 메세지를 전해줬을대 서버실행
 struct pollfd pollFDArray[MAX_USER_NUMBER];
-
+int StartServer(int currentFD);
 
 int StartServer(int currentFD) {
 

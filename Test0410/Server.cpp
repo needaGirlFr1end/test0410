@@ -4,7 +4,7 @@
 // 내부 공유기한테 서버를 실행시 내부 개인 아이피가 필요함.
 
 // 내부 아이피를 정의
-#define SERVER_PRIVATE_IP "172.31.38.57"
+#define SERVER_PRIVATE_IP "172.31.37.198"
 
 // 컴퓨터에는 여러개의 프로그램이 작동
 // 네트워크 사용시
@@ -102,6 +102,10 @@ int main() {
 	// 0번째 유저를 리슨소켓으로 사용
 	struct pollfd& listenFD = pollFDArray[0];
 
+	// 현재 유저수 
+	unsigned int currentUserNumber = 0;
+
+
 	// INET 4.3.0 = ipv4(4byte IP)
 	listenFD.fd = socket(AF_INET, SOCK_STREAM, 0);
 	listenFD.events = POLLIN;
@@ -126,12 +130,44 @@ int main() {
 		// 0번까지 폴에 넣어 리슨소켓에 대답있을때에도 돌아가도록 설정
 		int result = poll(pollFDArray, MAX_USER_NUMBER, -1);
 		
+
+		// 연결을 시도하고 싶어하는 소켓을 새로준비
+		struct sockaddr_in connectSocket;
+		socklens_t addressSize;
+
+
 		// 호출 시 
 		if (result > 0) {
 			// listenFD에 반응 시
 			// 접속 시도 시
 			if (listenFD.revents == POLLIN) {
-				cout << " 접속 시도 " << endl;
+				cout << " Someone Connected " << endl;
+				// 
+				int currendFD = accept(listenFD, (struct sockaddr*)&connectSocket, &addressSize);
+
+				if (currentUserNumber < MAX_USER_NUMBER - 1) {
+					// 0번은 리슨 소켓이므로
+					for (int i = 1; i < MAX_USER_NUMBER; i++) {
+						// 비어있는 pollFD찾기
+
+						if (pollFDArray[i].fd == -1) {
+
+							// 지금 연결한 소켓의 파일 FD를 받아옴
+							pollFDArray[i].fd = currendFD;
+							pollFDArray[i].events = POLLIN;
+							pollFDArray[i].revents = 0;
+
+							cout << "Connected" << endl;
+
+							// 유저수 추가후
+							++currentUserNumber;
+							
+							break;
+						}
+
+					}
+				}
+
 			};
 		};
 	};

@@ -181,6 +181,15 @@ int main() {
 	return -4;
 }
 
+// 대상 소켓을 정리
+void EndFD(struct pollfd* targetFD) {
+	
+	// 닫아주기
+	close(targetFD->fd);
 
+	// 닫았으니깐 -1로 표시하기
+	targetFD->fd = -1;
+	targetFD->revents = 0;
+}
 
 

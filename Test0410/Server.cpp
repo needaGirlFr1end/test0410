@@ -151,7 +151,7 @@ int main() {
 			if (listenFD.revents == POLLIN) {
 				cout << " Someone Connected " << endl;
 				// 
-				int currendFD = accept(listenFD, (struct sockaddr*)&connectSocket, &addressSize);
+				int currendFD = accept(listenFD.fd, (struct sockaddr*)&connectSocket, &addressSize);
 
 				if (currentUserNumber < MAX_USER_NUMBER - 1) {
 					// 0번은 리슨 소켓이므로

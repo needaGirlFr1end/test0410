@@ -161,12 +161,46 @@ int main() {
 
 							// 유저수 추가후
 							++currentUserNumber;
-							
-							break;
-						}
 
-					}
-				}
+							break;
+						};
+
+					};
+				};
+
+			};
+
+			// 이 위쪽은 접속을 관리하는 리슨소켓 내용
+			for (ini i = 1; i < MAX_USER_NUMBER; i++) {
+
+				// 대상이 전달해준 반응
+				switch (pollFDArray[i].revents)
+				{
+				// 반응 없음
+				case 0: break;
+				// 반응 있음
+				case POLLIN: 
+					// 무슨 반응이 있는지 확인
+					//						읽기 버퍼				연결해제 요청
+					if (read(pollFDArray[i].fd, buffRecv, MAX_BUFFER_SIZE) > 1) {
+						EndFD(&pollFDArray[i]);
+					};
+					
+					// 종료가 아닌 다른걸 부탁할때 메세지 처리
+
+					// 입력버퍼 초기화
+					memset(buffRecv, 0, sizeof(buffRecv));
+					
+					// 입력해결 완료후 내용없다.
+					pollFDArray[i].revents = 0;
+
+					break;
+
+				// 잘못된 값
+				default:
+					EndFD(&pollFDArray[i]);
+					break;
+				};
 
 			};
 		};

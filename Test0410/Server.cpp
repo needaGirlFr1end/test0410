@@ -190,6 +190,8 @@ void EndFD(struct pollfd* targetFD) {
 	// ´İ¾ÒÀ¸´Ï±ñ -1·Î Ç¥½ÃÇÏ±â
 	targetFD->fd = -1;
 	targetFD->revents = 0;
+
+	cout << "User Connection has Destroyed" << endl;
 }
 
 

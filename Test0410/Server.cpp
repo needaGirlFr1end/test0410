@@ -178,7 +178,7 @@ int main() {
 			};
 
 			// 이 위쪽은 접속을 관리하는 리슨소켓 내용
-			for (ini i = 1; i < MAX_USER_NUMBER; i++) {
+			for (int i = 1; i < MAX_USER_NUMBER; i++) {
 
 				// 대상이 전달해준 반응
 				switch (pollFDArray[i].revents)

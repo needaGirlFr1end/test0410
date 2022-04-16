@@ -140,7 +140,8 @@ int main() {
 
 		// 연결을 시도하고 싶어하는 소켓을 새로준비
 		struct sockaddr_in connectSocket;
-		socklens_t addressSize;
+		
+		socklen_t addressSize;
 
 
 		// 호출 시 

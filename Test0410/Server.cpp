@@ -196,7 +196,7 @@ int main() {
 				case POLLIN: 
 					// 무슨 반응이 있는지 확인
 					//						읽기 버퍼				연결해제 요청
-					if (read(pollFDArray[i].fd, buffRecv, MAX_BUFFER_SIZE) > 1) {
+					if (read(pollFDArray[i].fd, buffRecv, MAX_BUFFER_SIZE) < 1) {
 						EndFD(&pollFDArray[i]);
 					};
 					

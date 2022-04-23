@@ -200,8 +200,13 @@ int main() {
 						EndFD(&pollFDArray[i]);
 					};
 					
+					cout << "Recv" << endl;
+
 					// 종료가 아닌 다른걸 부탁할때 메세지 처리
 					BroadCastMessage(buffRecv, sizeof(buffRecv));
+
+					cout << "And Send" << endl;
+
 
 					// 입력버퍼 초기화
 					memset(buffRecv, 0, sizeof(buffRecv));

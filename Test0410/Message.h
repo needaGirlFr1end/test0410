@@ -35,7 +35,7 @@ void BroadCastMessage(char* message, int length, int sendFD = -1, bool sendSelf 
 
 
 		// 본인에게 안보낼껀데 받아온 정보가 있다면 넘어가기
-		if (!sendSelf && 1 = sendFD) continue;
+		if (!sendSelf && 1 == sendFD) continue;
 
 		// 대상이 없는데 보낼 수 없는 조건
 		if (pollFDArray[i].fd != -1) {

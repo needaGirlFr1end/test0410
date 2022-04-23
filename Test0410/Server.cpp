@@ -36,7 +36,21 @@
 #include <string.h>
 #include <unistd.h>
 
+
 using namespace std;
+
+// ListenFD 입구 역할
+	// 0번째 유저를 리슨소켓으로 사용
+struct pollfd& listenFD = pollFDArray[0];
+
+// 받을내용을 저장하는공간
+char buffRecv[MAX_BUFFER_SIZE] = { 0 };
+// 보낼 내용을 저장하는 공간
+char buffSend[MAX_BUFFER_SIZE] = { 0 };
+
+// 현재 유저수 
+unsigned int currentUserNumber = 0;
+
 
 
 // FD File Descripter
@@ -49,6 +63,10 @@ struct pollfd pollFDArray[MAX_USER_NUMBER];
 
 void EndFD(struct pollfd* targetFD);
 int StartServer(int currentFD);
+
+// 윗 변수들을 사용하기위해 헤더 위치를 여기로 조정
+#include "Message.h"
+
 
 int StartServer(int currentFD) {
 
@@ -100,18 +118,7 @@ int StartServer(int currentFD) {
 
 int main() {
 
-	// ListenFD 입구 역할
-	// 0번째 유저를 리슨소켓으로 사용
-	struct pollfd& listenFD = pollFDArray[0];
-
-	// 받을내용을 저장하는공간
-	char buffRecv[MAX_BUFFER_SIZE] = { 0 };
-	// 보낼 내용을 저장하는 공간
-	char buffSend[MAX_BUFFER_SIZE] = { 0 };
-
-	// 현재 유저수 
-	unsigned int currentUserNumber = 0;
-
+	
 
 	// INET 4.3.0 = ipv4(4byte IP)
 	listenFD.fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -195,6 +202,7 @@ int main() {
 					};
 					
 					// 종료가 아닌 다른걸 부탁할때 메세지 처리
+					BroadCastMessage(buffRecv, sizeof(buffRecv));
 
 					// 입력버퍼 초기화
 					memset(buffRecv, 0, sizeof(buffRecv));

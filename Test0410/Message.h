@@ -35,7 +35,7 @@ void BroadCastMessage(char* message, int length, int sendFD = -1, bool sendSelf 
 
 
 		// 본인에게 안보낼껀데 받아온 정보가 있다면 넘어가기
-		if (!sendSelf && 1 == sendFD) continue;
+		if (!sendSelf && i == sendFD) continue;
 
 		// 대상이 없는데 보낼 수 없는 조건
 		if (pollFDArray[i].fd != -1) {
@@ -43,9 +43,11 @@ void BroadCastMessage(char* message, int length, int sendFD = -1, bool sendSelf 
 			// 서버가 무언갈 보낼때  "메모 하기" 
 			// 받을떈 Read()
 			//		대상이 되는 소켓	보낼 메세지	길이
-			write(pollFDArray[i].fd, message, length);
+			if (write(pollFDArray[i].fd, message, length)) {
+				// 보냇따!
+				++send;
+			};
 
-			++send;
 		};
 	};
 }

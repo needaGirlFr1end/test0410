@@ -31,9 +31,9 @@ void BroadCastMessage(char* message, int length, int sendFD = -1, bool sendSelf 
 	
 	
 	// 0번은 리슨소켓 i가 최대치까지 가거나 현재 유저 수만큼 보냈다면
-	for (int i = 1; i < MAX_USER_NUMBER || send >= currentUserNumber; i++) {
+	for (int i = 1; i < MAX_USER_NUMBER ; i++) {
 
-
+		// || send >= currentUserNumber
 		// 본인에게 안보낼껀데 받아온 정보가 있다면 넘어가기
 		if (!sendSelf && i == sendFD) continue;
 
@@ -44,8 +44,10 @@ void BroadCastMessage(char* message, int length, int sendFD = -1, bool sendSelf 
 			// 받을떈 Read()
 			//		대상이 되는 소켓	보낼 메세지	길이
 			if (write(pollFDArray[i].fd, message, length)) {
-				// 보냇따!
-				++send;
+				
+				
+				// 보냇따!  다보냈을때 리턴해주기
+				if (++send >= currentUserNumber) return;
 			};
 
 		};

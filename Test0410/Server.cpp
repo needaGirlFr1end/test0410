@@ -39,8 +39,17 @@
 
 using namespace std;
 
+
+// FD File Descripter
+// Socket을 리눅스에선 File로 관리하기 때문에
+// 소켓에 해당되는 파일 번호(int) 정보를 저장.
+
+// poll 상대방이 반응을 해줬을때
+// 누군가 메세지를 전해줬을대 서버실행
+struct pollfd pollFDArray[MAX_USER_NUMBER];
+
 // ListenFD 입구 역할
-	// 0번째 유저를 리슨소켓으로 사용
+// 0번째 유저를 리슨소켓으로 사용
 struct pollfd& listenFD = pollFDArray[0];
 
 // 받을내용을 저장하는공간
@@ -50,16 +59,6 @@ char buffSend[MAX_BUFFER_SIZE] = { 0 };
 
 // 현재 유저수 
 unsigned int currentUserNumber = 0;
-
-
-
-// FD File Descripter
-// Socket을 리눅스에선 File로 관리하기 때문에
-// 소켓에 해당되는 파일 번호(int) 정보를 저장.
-
-// poll 상대방이 반응을 해줬을때
-// 누군가 메세지를 전해줬을대 서버실행
-struct pollfd pollFDArray[MAX_USER_NUMBER];
 
 void EndFD(struct pollfd* targetFD);
 int StartServer(int currentFD);

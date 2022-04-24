@@ -167,12 +167,25 @@ int main() {
 
 						if (pollFDArray[i].fd == -1) {
 
+							// 누가 발견됐을때
+							if (userArray[i] != nullptr) {
+								// 혹시 모르니 종료
+								// 저번에 혹시 안지워진 데이터 초기화
+								delete userArray[i];
+								
+							};
+
 							// 지금 연결한 소켓의 파일 FD를 받아옴
 							pollFDArray[i].fd = currendFD;
 							pollFDArray[i].events = POLLIN;
 							pollFDArray[i].revents = 0;
 
-							cout << "Connected" << endl;
+							// 유저를 새로 만들도록함
+							userArray[i] = new User(i);
+
+
+							cout << "Connected : " << i << endl;
+
 
 							// 유저수 추가후
 							++currentUserNumber;
@@ -204,7 +217,27 @@ int main() {
 					cout << "Recv" << endl;
 
 					// 종료가 아닌 다른걸 부탁할때 메세지 처리
-					BroadCastMessage(buffRecv, sizeof(buffRecv));
+					//BroadCastMessage(buffRecv, sizeof(buffRecv));
+					
+					int leftSize = sizeof(buffRecv);
+					int checkSize = 0;
+					// 처리할게 남아있다면
+					while (leftSize > 0)
+					{
+						// 지금까지 체크된 칸 다음부터 0123
+						char header[4];
+						header[0] = buffRecv[0 + checkSize];
+						header[1] = buffRecv[1 + checkSize];
+						header[2] = buffRecv[2 + checkSize];
+						header[3] = buffRecv[3 + checkSize];
+
+						//									  한칸씩 움직이면서 체크
+						int currentSize = TranslateMessage(i, buffRecv + checkSize, leftSize, ProcessMessage(header));
+
+						checkSize += currentSize;
+						leftSize -= currentSize;
+						
+					};
 
 					cout << "And Send" << endl;
 

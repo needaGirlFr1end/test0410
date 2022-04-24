@@ -6,7 +6,7 @@ class User {
 
 	int fdNumber;
 
-	wstring name = "<NULL>";
+	string name = "<NULL>";
 
 public:
 	User(int targetFD) {

@@ -6,13 +6,13 @@ class User {
 
 	int fdNumber;
 
-	wstring name = "<NULL>";
+	wstring name = '<NULL>';
 
 public:
 	User(int targetFD) {
 		fdNumber = targetFD;
 	}
 
-	void SetName(wstring wantName) { name = wantName };
+	void SetName(wstring wantName) { name = wantName; };
 
 };

@@ -224,7 +224,7 @@ int main() {
 					int leftSize = sizeof(buffRecv);
 					int checkSize = 0;
 					// 처리할게 남아있다면
-					while (leftSize > 0)
+					if (leftSize > 0)
 					{
 						// 지금까지 체크된 칸 다음부터 0123
 						char header[4];

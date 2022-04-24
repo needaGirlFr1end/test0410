@@ -96,7 +96,7 @@ MessageInfo ProcessMessage(char input[4]) {
 	
 	MessageInfo result;
 	
-	result.type = (MessageInfo)byteConvertor.shortInteger[0];		// 타입 돌려주기
+	result.type = byteConvertor.&shortInteger[0];		// 타입 돌려주기
 	result.length = byteConvertor.shortInteger[1] + 4;		// 길이까지 4qkdlxm cnrk
 
 	return result;

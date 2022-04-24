@@ -42,57 +42,6 @@ struct MessageInfo {
 	int length;
 };
 
-// 메시지를 구분하는 용도                     길이 받을 int주세용
-MessageInfo ProcessMessage(char[4] input) {
-
-	byteConvertor.charater = input;
-
-	// 메세지 타입 길이
-	// [][]       [][]
-	
-	MessageInfo result;
-	
-	result.type = byteConvertor.shortInteger.[0];		// 타입 돌려주기
-	result.length = byteConvertor.shortInteger.[1] + 4;		// 길이까지 4qkdlxm cnrk
-
-	return result;
-}
-
-int TranslateMessage(int fromFD, char* message, int messageLength, MessageInfo info) {
-	
-	// 전체 길이와 하나의 메세지의 길이중 더 작은값으로
-	int currentLength = min(messageLength, info.length);
-
-	// 메모리중에서 처리해야되는 메모리까지만
-	char* target = new char[currentLength];
-	memset(target, message, currentLength);
-	
-	// 타입에 따라 분류
-	switch (info.type)
-	{
-	case MessageType::Chat:
-
-		BroadCastMessage(target, currentLength, fromFD);
-		break;
-
-	case MessageType::LogIn:
-		break;
-
-	case MessageType::LogOut:
-		break;
-
-	default:
-		break;
-	};
-
-
-	// 메시지경우 하나씩 보내면 효율이 떨어지므로
-	// 한번에 보내도록 하는게 좋음
-	// 전체 메세지 길이 - 지금 확인한 메시지 길이
-	// 
-	return messageLength - info.length;
-}
-
 //												본인에게 보내기는 true 
 //												sendSelf true로 설정하기위해 
 //												sendFD를 초기화해야함
@@ -133,4 +82,58 @@ void BroadCastMessage(char* message, int length, int sendFD = -1, bool sendSelf 
 	};
 
 	cout<<
+}
+
+// 메시지를 구분하는 용도                     길이 받을 int주세용
+MessageInfo ProcessMessage(char input[4]) {
+
+	for (int i = 0; i < 4; i++) {
+		byteConvertor.charater[i] = input[i];
+	};
+
+
+	// 메세지 타입 길이
+	// [][]       [][]
+	
+	MessageInfo result;
+	
+	result.type = byteConvertor.shortInteger.[0];		// 타입 돌려주기
+	result.length = byteConvertor.shortInteger.[1] + 4;		// 길이까지 4qkdlxm cnrk
+
+	return result;
+}
+
+int TranslateMessage(int fromFD, char* message, int messageLength, MessageInfo info) {
+	
+	// 전체 길이와 하나의 메세지의 길이중 더 작은값으로
+	int currentLength = min(messageLength, info.length);
+
+	// 메모리중에서 처리해야되는 메모리까지만
+	char* target = new char[currentLength];
+	memcpy(target, message, currentLength);
+	
+	// 타입에 따라 분류
+	switch (info.type)
+	{
+	case MessageType::Chat:
+
+		BroadCastMessage(target, currentLength, fromFD);
+		break;
+
+	case MessageType::LogIn:
+		break;
+
+	case MessageType::LogOut:
+		break;
+
+	default:
+		break;
+	};
+
+
+	// 메시지경우 하나씩 보내면 효율이 떨어지므로
+	// 한번에 보내도록 하는게 좋음
+	// 전체 메세지 길이 - 지금 확인한 메시지 길이
+	// 
+	return messageLength - info.length;
 }

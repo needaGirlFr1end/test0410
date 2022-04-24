@@ -204,21 +204,23 @@ int main() {
 				// 대상이 전달해준 반응
 				switch (pollFDArray[i].revents)
 				{
-				// 반응 없음
+					// 반응 없음
 				case 0: break;
-				// 반응 있음
-				case POLLIN: 
+					// 반응 있음
+				case POLLIN:
+				// 지역 변수때문에
+				{
 					// 무슨 반응이 있는지 확인
 					//						읽기 버퍼				연결해제 요청
 					if (read(pollFDArray[i].fd, buffRecv, MAX_BUFFER_SIZE) < 1) {
 						EndFD(&pollFDArray[i]);
 					};
-					
+
 					cout << "Recv" << endl;
 
 					// 종료가 아닌 다른걸 부탁할때 메세지 처리
 					//BroadCastMessage(buffRecv, sizeof(buffRecv));
-					
+
 					int leftSize = sizeof(buffRecv);
 					int checkSize = 0;
 					// 처리할게 남아있다면
@@ -236,7 +238,7 @@ int main() {
 
 						checkSize += currentSize;
 						leftSize -= currentSize;
-						
+
 					};
 
 					cout << "And Send" << endl;
@@ -244,12 +246,12 @@ int main() {
 
 					// 입력버퍼 초기화
 					memset(buffRecv, 0, sizeof(buffRecv));
-					
+
 					// 입력해결 완료후 내용없다.
 					pollFDArray[i].revents = 0;
 
 					break;
-
+				}
 				// 잘못된 값
 				default:
 					EndFD(&pollFDArray[i]);

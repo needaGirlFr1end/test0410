@@ -88,7 +88,7 @@ void BroadCastMessage(char* message, int length, int sendFD = -1, bool sendSelf 
 MessageInfo ProcessMessage(char input[4]) {
 
 	for (int i = 0; i < 4; i++) {
-		byteConvertor.charater[i] = input[i];
+		byteConvertor.character[i] = input[i];
 	};
 
 
@@ -97,8 +97,8 @@ MessageInfo ProcessMessage(char input[4]) {
 	
 	MessageInfo result;
 	
-	result.type = byteConvertor.shortInteger.[0];		// 타입 돌려주기
-	result.length = byteConvertor.shortInteger.[1] + 4;		// 길이까지 4qkdlxm cnrk
+	result.type = byteConvertor.shortInteger[0];		// 타입 돌려주기
+	result.length = byteConvertor.shortInteger[1] + 4;		// 길이까지 4qkdlxm cnrk
 
 	return result;
 }

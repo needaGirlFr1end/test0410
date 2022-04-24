@@ -29,7 +29,7 @@ union ConvertionBase {
 	
 	float floating;
 
-	char characte[4]r;
+	char character[4];
 
 	short shortInteger[2];
 	unsigned short uShortInteger[2];

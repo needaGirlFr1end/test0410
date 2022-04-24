@@ -1,6 +1,13 @@
+
+// 항상 클라이언트의 eunm값을 일치시켜야함
 enum class MessageType
 {
+	LogIn,
+	LogOut,
 	Chat,
+
+
+
 	Length // 제가 가진 메시지 타입의 개수보다 많으면 무시!
 
 
@@ -52,4 +59,6 @@ void BroadCastMessage(char* message, int length, int sendFD = -1, bool sendSelf 
 
 		};
 	};
+
+	cout<<
 }

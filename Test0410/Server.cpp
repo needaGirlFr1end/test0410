@@ -33,7 +33,7 @@
 
 #include <sys/time.h>
 #include <sys/types.h>
-#include <string.h>
+#include <cstring.h>
 #include <unistd.h>
 
 
@@ -65,6 +65,7 @@ int StartServer(int currentFD);
 
 // 윗 변수들을 사용하기위해 헤더 위치를 여기로 조정
 #include "Message.h"
+#include "User.h"
 
 
 int StartServer(int currentFD) {

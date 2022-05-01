@@ -67,7 +67,7 @@ MessageInfo* ProcessMessage(char* input, int userIndex)
 		break;
 	
 	default:
-		return = new MessageInfo();
+		result = new MessageInfo();
 		result->type = MessageType::UnKnown;
 		break;
 	}

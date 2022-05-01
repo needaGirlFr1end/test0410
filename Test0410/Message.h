@@ -57,12 +57,18 @@ MessageInfo* ProcessMessage(char* input, int userIndex)
 	//메시지 타입에 따라서 내용 넣어주기!
 	switch ((MessageType)byteConvertor.shortInteger[0])
 	{
+	case MessageType::EndOfLine: return nullptr;
+
 	case MessageType::LogIn:
 		result = new MessageInfo_Login(input, userIndex);
 		break;
+	case MessageType::Chat:
+		result = new MessageInfo_Chat(input, userIndex);
+		break;
+	
 	default:
-		result = new MessageInfo();
-		result->type = MessageType::Chat;	//타입 돌려주기!
+		return = new MessageInfo();
+		result->type = MessageType::UnKnown;
 		break;
 	}
 	result->length	= byteConvertor.shortInteger[1] + 4;			//길이도 줍시다!
@@ -72,6 +78,9 @@ MessageInfo* ProcessMessage(char* input, int userIndex)
 
 int TranslateMessage(int fromFD, char* message, int messageLength, MessageInfo* info)
 {
+	// 아무것도 없을 시        // 끝까지 이동하여 끝내기
+	if (info == nullptr) return MAX_BUFFER_SIZE;
+
 	//전체 길이와 하나의 메시지 길이 둘 중에 작은 값으로!
 	int currentLength = min(messageLength, info->length);
 	//메모리 중에서 제가 처리해야하는 메모리까지만!
@@ -81,10 +90,14 @@ int TranslateMessage(int fromFD, char* message, int messageLength, MessageInfo* 
 	//타입에 따라 다른 행동!
 	switch (info->type)
 	{
-	case MessageType::Chat:
+	case MessageType::Chat: 
+	{
+		MessageInfo_Chat* chatInfo = (MessageInfo_Chat*)info;
+
 		BroadCastMessage(target, currentLength, fromFD);
 		cout << "Message Send To " << send << "User : " << target + 4 << endl;
 		break;
+	}
 	case MessageType::LogIn:
 	{
 		MessageInfo_Login* loginInfo = (MessageInfo_Login*)info;
@@ -98,8 +111,16 @@ int TranslateMessage(int fromFD, char* message, int messageLength, MessageInfo* 
 	}
 	case MessageType::LogOut:
 		break;
-	default:break;
+	case MessageType::EndOfLine:
+		return MAX_BUFFER_SIZE; // 최대치까지 밀어서 메시지가 없다는걸 알림
+
+	default: 
+		break;
 	}
+
+	// 메세지 처리완료
+	delete info;
+
 	//사실 메시지같은 경우는 하나씩 보내면 조금 효율이 떨어집니다 ㅎㅎ
 	//보낼 수 있을 때 여러개를 같이 보내는 게 좋습니다!
 	//모아두었다가 보내는 개념!

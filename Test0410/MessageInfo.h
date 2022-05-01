@@ -19,10 +19,12 @@ ConvertionBase byteConvertor;
 //항상 클라이언트의 enum값과 일치시켜주세요!
 enum class MessageType
 {
+	EndOfLine,
 	LogIn,
 	LogOut,
 	Chat,
 
+	UnKnown, // 서버전용
 	Length
 	//제가 가진 메시지 타입의 개수보다 더 많은 내용이 들어오면 무시!
 };
@@ -46,5 +48,21 @@ public :
 		userIndex = targetUser;
 		//메시지의 4번째부터 내용을 넣어주도록 합시다!
 		name = &(message[4]);
+	}
+};
+class MessageInfo_Chat : public MessageInfo
+{
+public:
+	int userIndex;
+	string value;
+
+
+	MessageInfo_Chat(char* message, int targetUser)
+	{
+		type = MessageType::Chat;
+
+		userIndex = targetUser;
+		//메시지의 4번째부터 내용을 넣어주도록 합시다!
+		value = &(message[4]);
 	}
 };

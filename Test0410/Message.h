@@ -1,4 +1,3 @@
-#include "MessageInfo.h"
 
 bool SendMessage(char* message, int length, int userNumber)
 {

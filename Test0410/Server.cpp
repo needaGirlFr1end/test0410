@@ -3,14 +3,14 @@
 //외부에서 접속을 할 때에는 퍼블릭IP가 필요하지만, 서버를 켤 때에는
 //내부 공유기한테 개인IP로 열 거에요! 라고 이야기할 필요가 있습니다!
 //내부 IP를 여기에다가 입력해주시면 됩니다!
-// 내부 아이피를 정의
 #define SERVER_PRIVATE_IP "172.31.41.33"
 
-// 컴퓨터에는 여러개의 프로그램이 작동
-// 네트워크 사용시
-// 각각 다른 게임 켰을 시 각 서버연결된 메세지를 포트로 구분함 
-
-// 49152 ~ 65535 자유롭게 사용가능
+//컴퓨터에는 동시에 여러개의 프로그램이 작동하고 있습니다!
+//엘든링을 하고 있었어요! 네트워크를 사용하고 있죠!
+//마영전을 같이 켜뒀습니다! 아이피만 가지고 대화를 시도하면요! 들어온 메시지가 엘든링 것인지, 마영전 것인지 전혀 알 수가 없어요!
+//"포트"라고 하는 것이 누구 메시지인지 구분할 수 있게 해줘요!
+//몇 번 포트로 주면 이 프로그램에 줄게요^^ 라고 하는 느낌!
+//49152 ~ 65535 가 자유롭게 사용할 수 있는 "동적 포트"니까 이 사이에 있는 값으로 조정해줄게요!
 #define SERVER_PORT 49153
 
 //서버에서는 메시지를 보낼 겁니다!
@@ -20,6 +20,12 @@
 
 //최대값을 정해야하는 다른 수가 있을 거에요!
 #define MAX_USER_NUMBER 100
+
+//메시지를 보내는데 일정한 간격을 두고 보냅니다!
+#define SEND_TICK_RATE 30
+
+//1초에 얼마나 보내는지!
+#define SEND_PER_SECONDS 1000 / SEND_TICK_RATE
 
 #include <iostream>
 
@@ -33,6 +39,8 @@
 #include <sys/types.h>
 #include <string.h>
 #include <unistd.h>
+#include <pthread.h>
+#include <queue>
 
 using namespace std;
 
@@ -56,6 +64,10 @@ char buffRecv[MAX_BUFFER_SIZE] = { 0 };
 //보낼 내용을 저장하는 공간(버퍼)
 char buffSend[MAX_BUFFER_SIZE] = { 0 };
 
+//쓰레드 부분!
+pthread_t sendThread;
+pthread_t commandThread;
+
 //현재 유저 수
 unsigned int currentUserNumber = 0;
 
@@ -67,6 +79,31 @@ int StartServer(int currentFD);
 #include "User.h"
 #include "MessageInfo.h"
 #include "Message.h"
+
+//유저들의 메시지를 보내는 스레드입니다!
+void* SendThread(void* data)
+{
+	int checkNumber;
+	while (true)
+	{
+		checkNumber = 0;
+		//유저 전체 돌아주기!
+		for (int i = 1; i < MAX_USER_NUMBER; i++)
+		{
+			//유저 있네!
+			if (userArray[i] != nullptr)
+			{
+				//보내보자!
+				userArray[i]->Send();
+
+				//체크 했습니다!
+				++checkNumber;
+				//체크 다했네요!
+				if (checkNumber >= currentUserNumber) break;
+			};
+		};
+	};
+}
 
 int main()
 {
@@ -253,6 +290,13 @@ int StartServer(int currentFD)
 	{
 		perror("listen()");
 		close(currentFD);
+		return -1;
+	};
+
+	//스레드를 만들어봅니다!
+	if (pthread_create(&sendThread, NULL, SendThread, NULL) != 0)
+	{
+		cout << "Cannot Create Send Thread" << endl;
 		return -1;
 	};
 

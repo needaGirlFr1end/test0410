@@ -1,3 +1,5 @@
+#include "MessageInfo.h"
+
 bool SendMessage(char* message, int length, int userNumber)
 {
 	//서버가 무언가 보낼 때 "적어 주는 거"에요 그래서 Write라고 부르고
@@ -76,6 +78,14 @@ MessageInfo* ProcessMessage(char* input, int userIndex)
 	case MessageType::LogIn:	result = new MessageInfo_Login(input, userIndex);
 		break;
 	case MessageType::Chat:		result = new MessageInfo_Chat(input, userIndex);
+		break;
+	case MessageType:Input:		
+		//													맨앞 헤더 뒤에!
+		// 4번쨰 칸부터 입력타임을 작성해둠
+		for (int i = 0; i < 4; i++) byteConvertor.character = input[i + 4];
+		result = new MessageInfo_Input((InputType)byteConvertor.integer, userIndex);
+
+		
 		break;
 	default:					result = new MessageInfo();
 								result->type = MessageType::Unknown;
@@ -192,8 +202,31 @@ int TranslateMessage(int fromFD, char* message, int messageLength, MessageInfo* 
 		delete broadcastResult;
 		break;
 	}
+
 	case MessageType::LogOut:
 		break;
+	case MessageType::Input:
+	{
+		MessageInfo_Input* inputInfo = (MessageInfo_Input*)info;
+		char* broadcastResult = new char[12];
+
+
+		byteConvertor.uShortInteger[0] = (short)MessageType::Input;
+		byteConvertor.uShortInteger[1] = 8;
+		for (int i = 0; i < 4; i++) broadcastResult[i] = byteConvertor[i];
+
+		// 사용한사람
+		byteConvertor.integer = inputInfo->userIndex;
+		for (int i = 0; i < 4; i++) broadcastResult[i+4] = byteConvertor[i];
+
+		byteConvertor.integer = inputInfo->type;
+		for (int i = 0; i < 4; i++) broadcastResult[i + 8] = byteConvertor[i];
+
+
+		BroadCastMessage(broadcastResult, 12);
+		delete[] broadcastResult;
+		break;
+	}
 
 	case MessageType::EndOfLine:
 		return MAX_BUFFER_SIZE; //최대치까지 밀어서 그 뒤에 메시지가 더 없다고 알려줍니다!

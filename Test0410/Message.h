@@ -78,7 +78,7 @@ MessageInfo* ProcessMessage(char* input, int userIndex)
 		break;
 	case MessageType::Chat:		result = new MessageInfo_Chat(input, userIndex);
 		break;
-	case MessageType:Input:		
+	case MessageType::Input:		
 		//													맨앞 헤더 뒤에!
 		// 4번쨰 칸부터 입력타임을 작성해둠
 		for (int i = 0; i < 4; i++) byteConvertor.character[i] = input[i + 4];

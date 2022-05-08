@@ -82,7 +82,7 @@ MessageInfo* ProcessMessage(char* input, int userIndex)
 	case MessageType:Input:		
 		//													맨앞 헤더 뒤에!
 		// 4번쨰 칸부터 입력타임을 작성해둠
-		for (int i = 0; i < 4; i++) byteConvertor.character = input[i + 4];
+		for (int i = 0; i < 4; i++) byteConvertor.character[i] = input[i + 4];
 		result = new MessageInfo_Input((InputType)byteConvertor.integer, userIndex);
 
 		
@@ -213,14 +213,14 @@ int TranslateMessage(int fromFD, char* message, int messageLength, MessageInfo* 
 
 		byteConvertor.uShortInteger[0] = (short)MessageType::Input;
 		byteConvertor.uShortInteger[1] = 8;
-		for (int i = 0; i < 4; i++) broadcastResult[i] = byteConvertor[i];
+		for (int i = 0; i < 4; i++) broadcastResult[i] = byteConvertor.character[i];
 
 		// 사용한사람
 		byteConvertor.integer = inputInfo->userIndex;
-		for (int i = 0; i < 4; i++) broadcastResult[i+4] = byteConvertor[i];
+		for (int i = 0; i < 4; i++) broadcastResult[i + 4] = byteConvertor.character[i];
 
 		byteConvertor.integer = inputInfo->type;
-		for (int i = 0; i < 4; i++) broadcastResult[i + 8] = byteConvertor[i];
+		for (int i = 0; i < 4; i++) broadcastResult[i + 8] = byteConvertor.character[i];
 
 
 		BroadCastMessage(broadcastResult, 12);

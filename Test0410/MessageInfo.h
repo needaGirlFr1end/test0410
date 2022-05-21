@@ -30,18 +30,19 @@ enum class MessageType
 	//제가 가진 메시지 타입의 개수보다 더 많은 내용이 들어오면 무시!
 };
 
-enum InputType
+enum class InputType
 {
 	Button0,
 	Button1,
-	Button2
+	Button2,
 };
+
 class MessageInfo
 {
 public :
-	int userIndex;
 	MessageType type;
 	int length;
+	int userIndex;
 };
 
 class MessageInfo_Login : public MessageInfo
@@ -71,17 +72,18 @@ public:
 		//메시지의 4번째부터 내용을 넣어주도록 합시다!
 		value = &(message[4]);
 	}
-
 };
-class MessageInfo_Input :public MessageInfo {
+
+class MessageInfo_Input : public MessageInfo
+{
 public:
-	InputType type;
+	InputType currentType;
 
-	MessageInfo_Input(InputType wantType, int targetUser) {
-		type = wantType;
+	MessageInfo_Input(InputType wantType, int targetUser)
+	{
+		type = MessageType::Input;
+
+		currentType = wantType;
 		userIndex = targetUser;
-
-
 	}
-
 };

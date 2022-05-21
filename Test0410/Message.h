@@ -1,3 +1,35 @@
+//메시지를 전달받아서 그 내용을 바이트단위로 분리해주는 녀석!
+//메시지 타입이나 길이는 잘 읽어서 돌려드립니다^^
+void DebugMessage(char* message)
+{
+	//처음 헤더를 읽어오기 시작합니다!
+	for (int i = 0; i < 4; i++)
+	{
+		byteConvertor.character[i] = message[i];
+	};
+
+	unsigned short type = byteConvertor.uShortInteger[0];
+
+	//타입이 0이니까! 더 메시지가 없어요!
+	if (type == 0) 
+	{ 
+		return;
+	};
+	//첫 번째 두 개의 바이트는 타입으로!
+	cout << "[ type : " << type << "] ";
+
+	//그 다음 두 개의 바이트는 길이로!
+	unsigned short length = byteConvertor.uShortInteger[1];
+	cout << "[ leng : " << length << "] ";
+
+	//뒤에 있는 애들을 몽땅 읽어오기!
+	for (int i = 0; i < length; i++)
+	{
+		cout << "[" << (int)message[i + 4] << "]";
+	};
+
+	cout << endl;
+}
 
 bool SendMessage(char* message, int length, int userNumber)
 {
@@ -68,6 +100,8 @@ MessageInfo* ProcessMessage(char* input, int userIndex)
 	//메시지타입		길이
 	//[][]			[][]
 
+	DebugMessage(input);
+
 	MessageInfo* result;
 	//메시지 타입에 따라서 내용 넣어주기!
 	switch ((MessageType)byteConvertor.shortInteger[0])
@@ -78,13 +112,10 @@ MessageInfo* ProcessMessage(char* input, int userIndex)
 		break;
 	case MessageType::Chat:		result = new MessageInfo_Chat(input, userIndex);
 		break;
-	case MessageType::Input:		
-		//													맨앞 헤더 뒤에!
-		// 4번쨰 칸부터 입력타임을 작성해둠
+	case MessageType::Input:
+		//4번째 칸부터 제가 입력 타입을 적어놓았습니다!
 		for (int i = 0; i < 4; i++) byteConvertor.character[i] = input[i + 4];
 		result = new MessageInfo_Input((InputType)byteConvertor.integer, userIndex);
-
-		
 		break;
 	default:					result = new MessageInfo();
 								result->type = MessageType::Unknown;
@@ -141,7 +172,7 @@ int TranslateMessage(int fromFD, char* message, int messageLength, MessageInfo* 
 		MessageInfo_Login* loginInfo = (MessageInfo_Login*)info;
 
 		cout << "Someone Try Login! Name is " << loginInfo->name << "!!" << endl;
-		//           유저번호  성공여부
+		//           유저번호  성공여부 (로그인 성공 / 중복 로그인 / 신규 로그인)
 		//[][] [][]  [][][][] []
 		char sendResult[9] = { 0 };
 
@@ -153,22 +184,24 @@ int TranslateMessage(int fromFD, char* message, int messageLength, MessageInfo* 
 			sendResult[i] = byteConvertor.character[i];
 		};
 
+		sendResult[8] = userArray[fromFD]->LogIn(loginInfo->name);
+
 		//로그인 정보에서 이름을 받아와서 시도해봅니다!
-		if (userArray[fromFD]->LogIn(loginInfo->name))
+		switch (sendResult[8])
 		{
-			sendResult[8] = 1;
-			cout << "Login Succeed" << endl;
-		}
-		else
-		{
-			sendResult[8] = 0;
-			cout << "Login Failed" << endl;
+		case 0: cout << "Login Succeed"		<< endl; break;
+		case 1: cout << "Invalide Password" << endl; break;
+		case 2: cout << "Already Logined"	<< endl; break;
+		case 3: cout << "Non-Exist ID"		<< endl; break;
+		case 4: cout << "ID Not Fit In Form"<< endl; break;
+		default:cout << "Unknown Error"		<< endl; break;
 		};
+
 		//본인한테 성공 여부를 보내주는 것!
 		SendMessage(sendResult, 9, fromFD);
 
 		//로그인에 실패한 경우에는 다른 사람들한테 아무 말도 안해도 괜찮아요!
-		if (sendResult[8] == 0) break;
+		if (sendResult[8] != 0) break;
 
 		//다른 사람들한테 보내줄 내용!
 		char* broadcastResult;
@@ -187,7 +220,7 @@ int TranslateMessage(int fromFD, char* message, int messageLength, MessageInfo* 
 		//                                            유저번호 들어갈 4칸!
 		for (int i = 0; i < 4; i++) broadcastResult[i] = byteConvertor.character[i];
 
-		// 유저번호 찾기
+		//유저 번호 무엇인가요?
 		byteConvertor.integer = loginInfo->userIndex;
 		for (int i = 0; i < 4; i++) broadcastResult[i + 4] = byteConvertor.character[i];
 
@@ -201,32 +234,28 @@ int TranslateMessage(int fromFD, char* message, int messageLength, MessageInfo* 
 		delete broadcastResult;
 		break;
 	}
-
 	case MessageType::LogOut:
 		break;
 	case MessageType::Input:
 	{
+		currentLength += 4;
 		MessageInfo_Input* inputInfo = (MessageInfo_Input*)info;
 		char* broadcastResult = new char[12];
-
 
 		byteConvertor.uShortInteger[0] = (short)MessageType::Input;
 		byteConvertor.uShortInteger[1] = 8;
 		for (int i = 0; i < 4; i++) broadcastResult[i] = byteConvertor.character[i];
 
-		// 사용한사람
 		byteConvertor.integer = inputInfo->userIndex;
 		for (int i = 0; i < 4; i++) broadcastResult[i + 4] = byteConvertor.character[i];
 
-		byteConvertor.integer = inputInfo->type;
+		byteConvertor.integer = (int)inputInfo->currentType;
 		for (int i = 0; i < 4; i++) broadcastResult[i + 8] = byteConvertor.character[i];
-
 
 		BroadCastMessage(broadcastResult, 12);
 		delete[] broadcastResult;
 		break;
 	}
-
 	case MessageType::EndOfLine:
 		return MAX_BUFFER_SIZE; //최대치까지 밀어서 그 뒤에 메시지가 더 없다고 알려줍니다!
 

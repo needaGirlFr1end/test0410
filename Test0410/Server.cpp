@@ -11,7 +11,7 @@
 //"포트"라고 하는 것이 누구 메시지인지 구분할 수 있게 해줘요!
 //몇 번 포트로 주면 이 프로그램에 줄게요^^ 라고 하는 느낌!
 //49152 ~ 65535 가 자유롭게 사용할 수 있는 "동적 포트"니까 이 사이에 있는 값으로 조정해줄게요!
-#define SERVER_PORT 49153
+#define SERVER_PORT 55123
 
 //서버에서는 메시지를 보낼 겁니다!
 //메시지 무한정 보낼 수는 없어요! 네트워크 계층에는 물리계층이 있는데 물리적인 한계가 존재할 수밖에 없죠!
@@ -79,6 +79,7 @@ int StartServer(int currentFD);
 #include "User.h"
 #include "MessageInfo.h"
 #include "Message.h"
+#include "SQL.h"
 
 //유저들의 메시지를 보내는 스레드입니다!
 void* SendThread(void* data)
@@ -297,6 +298,13 @@ int StartServer(int currentFD)
 	if (pthread_create(&sendThread, NULL, SendThread, NULL) != 0)
 	{
 		cout << "Cannot Create Send Thread" << endl;
+		return -1;
+	};
+
+	//SQL연결까지 시도해봅시다!
+	if (SQLConnect() == -1)
+	{
+		//SQL연결은 안쪽에서 왜 안되었는지 이야기해줍니다! cout은 안할게요!
 		return -1;
 	};
 

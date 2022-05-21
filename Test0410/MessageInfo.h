@@ -20,6 +20,7 @@ ConvertionBase byteConvertor;
 enum class MessageType
 {
 	EndOfLine, //문자열의 끝을 판단할 때 \0이라고 하는 걸 파악했습니다! 메시지가 뒤에 더 없다 라고 하는 걸 EndOfLine으로 표시!
+	SignUp,
 	LogIn,
 	LogOut,
 	Chat,
@@ -49,6 +50,8 @@ class MessageInfo_Login : public MessageInfo
 {
 public :
 	string name;
+	string password;
+
 	MessageInfo_Login(char* message, int targetUser)
 	{
 		type = MessageType::LogIn;
@@ -56,6 +59,40 @@ public :
 		userIndex = targetUser;
 		//메시지의 4번째부터 내용을 넣어주도록 합시다!
 		name = &(message[4]);
+		int currentIndex = 4;
+		// 0이 될떄까지 이동
+		while (message[currentIndex] != 0)  ++currentIndex;
+		++currentIndex;
+		password = &(message[currentIndex]);
+
+	}
+};
+
+class MessageInfo_SignUp : public MessageInfo
+{
+public:
+	string name;
+	string password;
+	string nickname;
+
+	MessageInfo_SignUp(char* message, int targetUser)
+	{
+		type = MessageType::LogIn;
+
+		userIndex = targetUser;
+		//메시지의 4번째부터 내용을 넣어주도록 합시다!
+		name = &(message[4]);
+		int currentIndex = 4;
+		// 0이 될떄까지 이동
+		while (message[currentIndex] != 0)  ++currentIndex;
+
+		++currentIndex;
+		password = &(message[currentIndex]);
+
+		while (message[currentIndex] != 0)  ++currentIndex;
+
+		++currentIndex;
+		nickname = &(message[currentIndex]);
 	}
 };
 

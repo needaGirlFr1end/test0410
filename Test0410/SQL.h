@@ -1,5 +1,5 @@
 #pragma once
-#include "/usr/include/mysql/mysql.h"
+#include "-I/usr/include/mysql/mysql.h"
 
 #define SQL_ADDRESS "localhost"
 #define SQL_ID		"root"
